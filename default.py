@@ -40,7 +40,10 @@ def listVideos(url):
         spl=content.split('<li class="mediaGridItem ">')
         for i in range(1,len(spl),1):
             entry=spl[i]
-            match=re.compile('<img alt="(.+?)"', re.DOTALL).findall(entry)
+			#get title
+            match=re.compile('<li class="title">.*?>(.*?)</a>.*?</li>', re.DOTALL).findall(entry)
+            #title may be wrapped in <span>-tag - remove if existing
+            match=re.compile('<\s*span[^>]*>(.*?)<\s*/\s*span>', re.DOTALL).findall(match[0])
             title=match[0]
             title=cleanTitle(title)
             match=re.compile('href="/video/watch/(.+?)/"', re.DOTALL).findall(entry)
@@ -132,7 +135,7 @@ def addDir(name,url,mode,iconimage):
         liz.setInfo( type="Video", infoLabels={ "Title": name } )
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
-         
+
 params=parameters_string_to_dict(sys.argv[2])
 mode=params.get('mode')
 url=params.get('url')
